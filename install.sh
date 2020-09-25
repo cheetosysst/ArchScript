@@ -28,7 +28,7 @@ fi
 
 timedatectl set-ntp true
 
-pacman -Syyu
+# pacman -Syyu
 
 if ls /sys/firmware/efi/efivars; then
 	message  "This machine is using UEFI, which is not supported by this script. See more at $ARCH_INSTALL_GUIDE_URL"
