@@ -11,7 +11,7 @@ message() {
 	echo "[INSTALL] $1"
 }
 
-cat $(dirname "$0")/banner
+cat $BASEDIR/banner
 echo "$SCRIPT_VERSION"
 echo "Github: $SCRIPT_GIT_URL"
 echo "Author: $AUTHOR"
