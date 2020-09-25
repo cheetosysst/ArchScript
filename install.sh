@@ -5,12 +5,13 @@ ARCH_REPO_URL="archlinux.org"
 ARCH_INSTALL_GUIDE_URL="https://wiki.archlinux.org/index.php/installation_guide"
 AUTHOR="Thect (Chen Chang)"
 LICENSE="MIT"
+BASEDIR=$(dirname "$0")
 
 message() {
 	echo "[INSTALL] $1"
 }
 
-cat banner
+cat $BASEDIR/banner
 echo "$SCRIPT_VERSION"
 echo "Github: $SCRIPT_GIT_URL"
 echo "Author: $AUTHOR"
@@ -26,6 +27,8 @@ else
 fi 
 
 timedatectl set-ntp true
+
+pacman -Syyu
 
 if ls /sys/firmware/efi/efivars; then
 	message  "This machine is using UEFI, which is not supported by this script. See more at $ARCH_INSTALL_GUIDE_URL"
