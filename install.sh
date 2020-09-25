@@ -7,4 +7,4 @@ pacstrap /mnt \
 	sddm xfce4 awesome\
 	konsole firefox spectacle thunar \
 	ttf-freefont ttf-roboto noto-fonts noto-fonts-emoji noto-fonts-cjk adobe-source-code-pro-fonts \
-	sudo vim git base-devel
+	sudo vim git base-devel zsh
