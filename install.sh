@@ -8,7 +8,10 @@ LICENSE="MIT"
 BASEDIR=$(dirname "$0")
 
 message() {
-	echo "[INSTALL] $1"
+	echo -e "[\033[1;34mINSTALL\033[1;37m] $1"
+}
+warning() {
+	echo -e "[\033[0;31mWARNING\033[1;37m] $1"
 }
 
 cat $BASEDIR/banner
@@ -21,18 +24,19 @@ echo ""
 if ping -c 1 "$ARCH_REPO_URL" -i 5 > /dev/null; then
 	message "$ARCH_REPO_URL is up"
 else
-	message  "$ARCH_REPO_URL is down"
-	message  "This script doesn't yet support offline install, please try connecting to WAN or do install it yourself"
-	message  "See $ARCH_INSTALL_GUIDE_URL for more information"
+	warning  "$ARCH_REPO_URL is down"
+	warning  "This script doesn't yet support offline install, please try connecting to WAN or do install it yourself"
+	warning  "See $ARCH_INSTALL_GUIDE_URL for more information"
 fi 
 
+message "timedatectl set-ntp true"
 timedatectl set-ntp true
 
 # pacman -Syyu
-
+message "Checking boot mode"
 if ls /sys/firmware/efi/efivars; then
 	message "UEFI mode detected"
-	message "This machine is using UEFI, which is not supported by this script. See more at $ARCH_INSTALL_GUIDE_URL"
+	warning "This machine is using UEFI, which is not supported by this script. See more at $ARCH_INSTALL_GUIDE_URL"
 	exit 
 else
 	message "BIOS mode detected"
@@ -42,10 +46,11 @@ else
 	mount /dev/sda2 /mnt
 	swapon /dev/sda1
 
+# message "Resetting key"
+# pacman-key --init
+# pacman-key --populate
 
-pacman-key --init
-pacman-key --populate
-
+message "Packagee download start"
 pacstrap /mnt \
 	base linux linux-firmware \
 	networkmanager \
@@ -56,13 +61,17 @@ pacstrap /mnt \
 	ttf-freefont ttf-roboto noto-fonts noto-fonts-emoji noto-fonts-cjk adobe-source-code-pro-fonts \
 	sudo vim git base-devel zsh
 
+message "genfstab"
 genfstab -U /mnt >> /mnt/etc/fstab
 
+message "arch-chroot"
 arch-chroot /mnt
 
+message "SystemD service start"
 systemctl enable NetworkManager
 systemctl enable sddm
 
+message "Set default time to Asia/Taipei"
 ln -sf /usr/share/zoneinfo/Asia/Taipei /etc/localtime
 hwclock --systohc
 
@@ -73,12 +82,17 @@ passwd
 message -p "Choose user \"$USERNAME\" password"
 passwd $USERNAME
 
+message "mkinitcpio -P"
 mkinitcpio -P
 
+message "Grub installation"
 grub-install --target=i386-pc /dev/XXX
 grub-mkconfig -o /boot/grub/grub.cfg
 
+
+message "Installation finished, rebooting..."
 exit
 
 umount -R /mnt
 reboot
+exit 0
