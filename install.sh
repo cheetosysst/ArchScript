@@ -45,6 +45,7 @@ else
 	mkfs.ext4 /dev/sda2
 	mount /dev/sda2 /mnt
 	swapon /dev/sda1
+fi
 
 # message "Resetting key"
 # pacman-key --init
