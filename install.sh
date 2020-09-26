@@ -65,6 +65,14 @@ pacstrap /mnt \
 message "genfstab"
 genfstab -U /mnt >> /mnt/etc/fstab
 
+echo "Press any key to continue"
+while [ true ] ; do
+	read -t 3 -n 1
+	if [ $? = 0 ] ; then
+		continue
+	fi
+done
+
 message "arch-chroot"
 arch-chroot /mnt ./chroot_BIOS.sh
 
