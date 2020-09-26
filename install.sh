@@ -31,21 +31,54 @@ timedatectl set-ntp true
 # pacman -Syyu
 
 if ls /sys/firmware/efi/efivars; then
-	message  "This machine is using UEFI, which is not supported by this script. See more at $ARCH_INSTALL_GUIDE_URL"
+	message "UEFI mode detected"
+	message "This machine is using UEFI, which is not supported by this script. See more at $ARCH_INSTALL_GUIDE_URL"
+	exit 
 else
-	message 
-	
+	message "BIOS mode detected"
+	echo -e "o\nn\np\n1\n\n+1GB\nn\np\n2\n\n\nw" | fdisk /dev/sda
+	mkswap /dev/sda1 
+	mkfs.ext4 /dev/sda2
+	mount /dev/sda2 /mnt
+	swapon /dev/sda1
+
 
 pacman-key --init
 pacman-key --populate
 
-# pacstrap /mnt \
-# 	base linux linux-firmware \
-# 	networkmanager \
-# 	grub \
-# 	mesa \
-# 	bluez pulseaudio-alsa \
-# 	sddm xfce4 awesome\
-# 	konsole firefox spectacle thunar \
-# 	ttf-freefont ttf-roboto noto-fonts noto-fonts-emoji noto-fonts-cjk adobe-source-code-pro-fonts \
-# 	sudo vim git base-devel zsh
+pacstrap /mnt \
+	base linux linux-firmware \
+	networkmanager \
+	grub mesa \
+	bluez pulseaudio-alsa \
+	sddm plasma\
+	konsole firefox spectacle thunar \
+	ttf-freefont ttf-roboto noto-fonts noto-fonts-emoji noto-fonts-cjk adobe-source-code-pro-fonts \
+	sudo vim git base-devel zsh
+
+genfstab -U /mnt >> /mnt/etc/fstab
+
+arch-chroot /mnt
+
+systemctl enable NetworkManager
+systemctl enable sddm
+
+ln -sf /usr/share/zoneinfo/Asia/Taipei /etc/localtime
+hwclock --systohc
+
+read -p "Please type your username, and press ENTER: " USERNAME
+message "Your username is \"$USERNAME\""
+message -p "Choose root password"
+passwd 
+message -p "Choose user \"$USERNAME\" password"
+passwd $USERNAME
+
+mkinitcpio -P
+
+grub-install --target=i386-pc /dev/XXX
+grub-mkconfig -o /boot/grub/grub.cfg
+
+exit
+
+umount -R /mnt
+reboot
