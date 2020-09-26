@@ -16,4 +16,21 @@ cd ArchScript
 sh ./install.sh
 ```
 
-沒出意外的話接話來就是看戲，然後恭喜加入 Arch 使用者的一員~~
+因目前有未解決的問題(我還在翻文檔)，所以接下來的幾個腳本也得自己下指令。
+
+未來會修改成完全自動執行
+
+```sh
+arch-chroot /mnt 
+curl https://github.com/cheetosysst/ArchScript/blob/master/chroot_BIOS.sh | sh
+
+# VMware 驅動程式
+curl https://github.com/cheetosysst/ArchScript/blob/master/vmware_driver.sh | sh
+```
+
+到這裡沒有其他要設定的就可以先重開機了
+```sh
+exit
+umount -R /mnt
+reboot
+```

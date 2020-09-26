@@ -65,19 +65,13 @@ pacstrap /mnt \
 message "genfstab"
 genfstab -U /mnt >> /mnt/etc/fstab
 
-echo "Press any key to continue"
-while [ true ] ; do
-	read -t 3 -n 1
-	if [ $? = 0 ] ; then
-		continue
-	fi
-done
+exit
 
-message "arch-chroot"
-arch-chroot /mnt ./chroot_BIOS.sh
+# message "arch-chroot"
+# arch-chroot /mnt ./chroot_BIOS.sh
 
-message "Installation finished, rebooting..."
+# message "Installation finished, rebooting..."
 
-umount -R /mnt
-reboot
+# umount -R /mnt
+# reboot
 
