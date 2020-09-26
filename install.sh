@@ -51,7 +51,7 @@ fi
 # pacman-key --init
 # pacman-key --populate
 
-message "Packagee download start"
+message "Package download start"
 pacstrap /mnt \
 	base linux linux-firmware \
 	networkmanager \
@@ -66,35 +66,10 @@ message "genfstab"
 genfstab -U /mnt >> /mnt/etc/fstab
 
 message "arch-chroot"
-arch-chroot /mnt
-
-message "SystemD service start"
-systemctl enable NetworkManager
-systemctl enable sddm
-
-message "Set default time to Asia/Taipei"
-ln -sf /usr/share/zoneinfo/Asia/Taipei /etc/localtime
-hwclock --systohc
-
-read -p "Please type your username, and press ENTER: " USERNAME
-message "Your username is \"$USERNAME\""
-message -p "Choose root password"
-passwd 
-message -p "Choose user \"$USERNAME\" password"
-passwd $USERNAME
-
-message "mkinitcpio -P"
-mkinitcpio -P
-
-message "Grub installation"
-grub-install --target=i386-pc /dev/XXX
-grub-mkconfig -o /boot/grub/grub.cfg
-
+arch-chroot /mnt ./chroot_BIOS.sh
 
 message "Installation finished, rebooting..."
-exit
 
 umount -R /mnt
 reboot
-exit 0
 
