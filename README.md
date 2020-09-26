@@ -1,4 +1,4 @@
-# Arch Script
+# ArchScript
 一個 Arch 安裝腳本，適用於 VMware 環境，其他環境未來會再一一補齊。
 
 ## Installation 安裝
