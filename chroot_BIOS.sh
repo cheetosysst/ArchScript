@@ -1,3 +1,10 @@
+message() {
+	echo -e "[\033[1;34mINSTALL\033[1;37m] $1"
+}
+warning() {
+	echo -e "[\033[0;31mWARNING\033[1;37m] $1"
+}
+
 message "SystemD service start"
 systemctl enable NetworkManager
 systemctl enable sddm
