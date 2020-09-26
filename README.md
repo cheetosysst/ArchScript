@@ -1,5 +1,5 @@
 # Arch Script
-一個 Arch 安裝腳本，適用於 Virtualbox 環境，其他環境未來會再一一補齊。
+一個 Arch 安裝腳本，適用於 VMware 環境，其他環境未來會再一一補齊。
 
 ## Installation 安裝
 先用 VMware player 打開新的虛擬機，相關設定這裡就先不贅述，請使用最新的 Arch 官方 iso 檔開機。進入環境後請輸入
