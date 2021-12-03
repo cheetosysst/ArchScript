@@ -1,3 +1,14 @@
+########################################
+# Arch install script
+########################################
+# Installation Steps:
+# 1. Download Arch ISO from "https://archlinux.org/download/"
+# 2. Execute ./install.sh
+# 3. Execute chroot_{boot method}.sh
+# 4. Reboot
+########################################
+
+# Variables
 SCRIPT_NAME="ArchInstall"
 SCRIPT_VERSION="v0.1"
 SCRIPT_GIT_URL="https://github.com/cheetosysst/ArchScript"
@@ -7,13 +18,15 @@ AUTHOR="Thect (Chen Chang)"
 LICENSE="MIT"
 BASEDIR=$(dirname "$0")
 
-message() {
+# Functions
+message() { 
 	echo -e "[\033[1;34mINSTALL\033[1;37m] $1"
 }
 warning() {
 	echo -e "[\033[0;31mWARNING\033[1;37m] $1"
 }
 
+# Installation starts!!
 cat $BASEDIR/banner
 echo "$SCRIPT_VERSION"
 echo "Github: $SCRIPT_GIT_URL"
@@ -22,21 +35,27 @@ echo "License: $LICENSE"
 echo ""
 
 if ping -c 1 "$ARCH_REPO_URL" -i 5 > /dev/null; then
-	message "$ARCH_REPO_URL is up"
+	message "$ARCH_REPO_URL is up, proceed ti install."
 else
 	warning  "$ARCH_REPO_URL is down"
-	warning  "This script doesn't yet support offline install, please try connecting to WAN or do install it yourself"
-	warning  "See $ARCH_INSTALL_GUIDE_URL for more information"
+	warning  "See $ARCH_INSTALL_GUIDE_URL for more information."
+	exit
 fi 
 
 message "timedatectl set-ntp true"
 timedatectl set-ntp true
 
-# pacman -Syyu
 message "Checking boot mode"
 if ls /sys/firmware/efi/efivars; then
 	message "UEFI mode detected"
-	warning "This machine is using UEFI, which is not supported by this script. See more at $ARCH_INSTALL_GUIDE_URL"
+	echo -e "g\nn\np\n1\n\n+400m\nn\np\n2\n\n+4g\nn\np\n3\n\n\nw" | fdisk /dev/sda
+	mkfs.fat -F 32 /dev/sda1
+	mkswap /dev/sda2
+	mkfs.ext4 /dev/sda3
+	mount /dev/sda3 /mnt
+	swapon /dev/sda2
+	mkdir /mnt/boot
+	mount /dev/sda1 /mnt/boot
 	exit 
 else
 	message "BIOS mode detected"
@@ -47,31 +66,19 @@ else
 	swapon /dev/sda1
 fi
 
-# message "Resetting key"
-# pacman-key --init
-# pacman-key --populate
-
-message "Package download start"
+message "Pacstrap installation"
 pacstrap /mnt \
 	base linux linux-firmware \
 	networkmanager \
 	grub mesa \
-	bluez pulseaudio-alsa \
-	sddm plasma\
-	konsole firefox spectacle thunar \
-	ttf-freefont ttf-roboto noto-fonts noto-fonts-emoji noto-fonts-cjk adobe-source-code-pro-fonts \
 	sudo vim git base-devel zsh
 
 message "genfstab"
-genfstab -U /mnt >> /mnt/etc/fstab
+if ls /sys/firmware/efi/efivars; then
+	genfstab -U /mnt >> /mnt/etc/fstab
+else
+	genfstab -L /mnt >> /mnt/etc/fstab
+fi
 
 exit
-
-# message "arch-chroot"
-# arch-chroot /mnt ./chroot_BIOS.sh
-
-# message "Installation finished, rebooting..."
-
-# umount -R /mnt
-# reboot
 

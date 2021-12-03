@@ -5,10 +5,6 @@ warning() {
 	echo -e "[\033[0;31mWARNING\033[1;37m] $1"
 }
 
-message "Systemd service start"
-systemctl enable NetworkManager
-systemctl enable sddm
-
 message "Set default time to Asia/Taipei"
 ln -sf /usr/share/zoneinfo/Asia/Taipei /etc/localtime
 hwclock --systohc
