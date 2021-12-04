@@ -48,7 +48,7 @@ timedatectl set-ntp true
 message "Checking boot mode"
 if ls /sys/firmware/efi/efivars; then
 	message "UEFI mode detected"
-	echo -e "g\nn\np\n\n\n+400m\nn\np\n\n\n+4g\nn\np\n\n\n\nw" | fdisk /dev/sda
+	echo -e "g\nn\n\np\n\n+400m\nn\n\np\n\n+4g\nn\n\np\n\n\nw" | fdisk /dev/sda
 	mkfs.fat -F 32 /dev/sda1
 	mkswap /dev/sda2
 	mkfs.ext4 /dev/sda3
