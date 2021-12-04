@@ -10,3 +10,9 @@ message "Set timezone"
 # ln -sf "/usr/share/zoneinfo/$timezone" /etc/localtime
 # hwclock --systohc	
 
+# echo "" > /etc/locale.conf
+# locale-gen
+
+# echo "" > /etc/hostname
+
+# mkinitcpio -P
